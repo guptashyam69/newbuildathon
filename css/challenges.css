@@ -47,6 +47,7 @@
   background: linear-gradient(135deg, transparent 0%, var(--card-accent, rgba(0,245,255,0.05)) 100%);
   opacity: 0;
   transition: opacity 0.4s;
+  pointer-events: none;
 }
 .challenge-card:hover {
   transform: translateY(-8px) scale(1.01);
@@ -139,6 +140,8 @@
   text-decoration: none;
   transition: all 0.3s;
   white-space: nowrap;
+  position: relative;
+  z-index: 2;
 }
 .challenge-learn-btn:hover {
   background: var(--card-color, var(--neon-cyan));

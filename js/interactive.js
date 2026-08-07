@@ -187,6 +187,10 @@ class FAQChatbot {
     this.closeBtn = document.querySelector('.chatbot-close');
     this.msgContainer = document.querySelector('.chatbot-messages');
     this.suggContainer = document.querySelector('.chatbot-suggestions');
+    this.backContainer = document.querySelector('.chatbot-back-container');
+    this.backBtn = document.querySelector('.chat-back-btn');
+    this.inputField = document.getElementById('chat-user-query');
+    this.sendBtn = document.getElementById('chat-send-btn');
     
     this.responses = {
       eligibility: "Any college student is welcome! Undergraduates, postgraduates, engineering, science, or commerce streams. All years welcome.",
@@ -223,6 +227,31 @@ class FAQChatbot {
         this.handleUserQuery(query, text);
       }
     });
+
+    // Back Button Logic
+    if (this.backBtn && this.backContainer) {
+      this.backBtn.addEventListener('click', () => {
+        this.backContainer.style.display = 'none';
+        this.suggContainer.style.display = 'flex';
+      });
+    }
+
+    // Input Submission Logic
+    if (this.sendBtn && this.inputField) {
+      const submitCustomQuery = () => {
+        const queryVal = this.inputField.value.trim();
+        if (!queryVal) return;
+        this.inputField.value = '';
+        this.handleCustomQuery(queryVal);
+      };
+      
+      this.sendBtn.addEventListener('click', submitCustomQuery);
+      this.inputField.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          submitCustomQuery();
+        }
+      });
+    }
   }
 
   addBotMessage(text) {
@@ -245,11 +274,67 @@ class FAQChatbot {
   handleUserQuery(query, displayTxt) {
     this.addUserMessage(displayTxt);
     
+    // Hide suggestions, show back button
+    if (this.suggContainer && this.backContainer) {
+      this.suggContainer.style.display = 'none';
+      this.backContainer.style.display = 'block';
+    }
+    
     // Simulate thinking delay
     setTimeout(() => {
       const resp = this.responses[query] || this.responses.help;
       this.addBotMessage(resp);
     }, 600);
+  }
+
+  handleCustomQuery(queryText) {
+    this.addUserMessage(queryText);
+    
+    // Hide suggestions, show back button
+    if (this.suggContainer && this.backContainer) {
+      this.suggContainer.style.display = 'none';
+      this.backContainer.style.display = 'block';
+    }
+    
+    // Append a temporary loading bot message
+    const tempBotMsg = document.createElement('div');
+    tempBotMsg.className = 'chat-msg bot';
+    tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span><span class="chat-bot-loading"><span class="spinner" style="display:inline-block;width:12px;height:12px;border:2px solid var(--neon-purple);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-right:0.5rem;vertical-align:middle;"></span>AI is searching site context...</span>`;
+    this.msgContainer.appendChild(tempBotMsg);
+    this.msgContainer.scrollTop = this.msgContainer.scrollHeight;
+    sfx.playTick();
+    
+    // Fetch from backend script with Gemini action
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: 'askGemini',
+        query: queryText
+      })
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      const loader = tempBotMsg.querySelector('.chat-bot-loading');
+      if (loader) {
+        let reply = data.reply || "I'm sorry, I couldn't process your request. Please try again.";
+        // Simple markdown parsing to HTML
+        reply = reply
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/\n/g, '<br>')
+          .replace(/- (.*?)(<br>|$)/g, '• $1$2');
+        tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span>${reply}`;
+        sfx.playSuccess();
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      const loader = tempBotMsg.querySelector('.chat-bot-loading');
+      if (loader) {
+        tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span>An error occurred while connecting to the AI helper. Please try again.`;
+      }
+    });
   }
 }
 

@@ -146,6 +146,78 @@ function doPost(e) {
       }
     }
     
+    else if (data.action === "askGemini") {
+      var apiKey = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY");
+      if (!apiKey) {
+        return ContentService.createTextOutput(JSON.stringify({ 
+          status: "success", 
+          reply: "👋 The Buildathon Gemini AI Chatbot is ready!\n\n**To enable AI replies**, please add your Gemini API Key in Google Apps Script under **Project Settings -> Script Properties** with the property name: `GEMINI_API_KEY`."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      var promptContext = "You are the helpful AI Assistant for the Buildathon 2026 AI Hackathon. " +
+        "Here is the context about the event to answer questions: \n" +
+        "- Event: Buildathon 2026 (a 4-hour hackathon, starting at 9:00 AM IST to 1:00 PM IST on August 13, 2026).\n" +
+        "- Team Size: 2 to 4 members. The leader fills the form first, then adds other team members using their unique Team ID.\n" +
+        "- Team ID: When the leader registers, a unique 8-character Team ID is generated (e.g. TH-XXXXXX) which is stored in the sheet and emailed. Members use this Team ID to join.\n" +
+        "- Event Timeline & Rounds:\n" +
+        "  * 9:00 AM IST: Round 1 (Problem Solving Challenge) - Teams brainstorm and identify a practical solution for a unique statement, and pitch briefly to judges. Top 5-6 teams qualify.\n" +
+        "  * 10:30 AM IST: Round 2 (AI Website Building Challenge) - Teams construct a prototype using AI website building engines in under 90 minutes. Top 3 teams qualify.\n" +
+        "  * 12:00 PM IST: Round 3 (Product Pitch & Demonstration) - Finalists present working prototypes, target users, scope, and Q&A to judges.\n" +
+        "  * 1:00 PM IST: Result Declaration & Award Distribution.\n" +
+        "- Challenge Tracks (9 tracks available):\n" +
+        "  * Track 01: Connected Communities (Social Welfare Platform)\n" +
+        "  * Track 02: AI for Impact (Real-World AI Solutions)\n" +
+        "  * Track 03: Future Learning (EdTech Innovation)\n" +
+        "  * Track 04: Green Future (Environment & Sustainability)\n" +
+        "  * Track 05: Smart Agriculture (AgriTech Solutions)\n" +
+        "  * Track 06: Smart Sports (Sports Tech Innovation)\n" +
+        "  * Track 07: Smart Healthcare (Digital Health Innovation)\n" +
+        "  * Track 08: Women Safety (SafeHer - Safety, Security & Social Impact)\n" +
+        "  * Track 09: Smart Campus (EdTech - Digital College Ecosystem)\n" +
+        "- Rewards: All participants get badges, certificates, and swag kits. Winners receive trophies, exclusive developer gear, and mystery surprise rewards (prizes are a surprise, no cash amounts mentioned!).\n" +
+        "- Rules & Submissions: AI-assisted coding is allowed but you must explain your work. Final Round 2 deliverables include: Working Prototype, Source Code repository link, Project PPT, System Architecture Diagram.\n\n" +
+        "Answer the user's question accurately using ONLY this information. If the question is outside the scope of Buildathon, politely inform them that you can only answer questions related to the Buildathon 2026 hackathon.";
+
+      try {
+        var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+        var payload = {
+          contents: [{
+            parts: [{
+              text: promptContext + "\n\nUser Question: " + data.query
+            }]
+          }]
+        };
+        
+        var options = {
+          method: "post",
+          contentType: "application/json",
+          payload: JSON.stringify(payload),
+          muteHttpExceptions: true
+        };
+        
+        var response = UrlFetchApp.fetch(url, options);
+        var responseText = response.getContentText();
+        var resData = JSON.parse(responseText);
+        
+        var replyText = "";
+        if (resData.candidates && resData.candidates[0] && resData.candidates[0].content && resData.candidates[0].content.parts && resData.candidates[0].content.parts[0]) {
+          replyText = resData.candidates[0].content.parts[0].text;
+        } else if (resData.error) {
+          replyText = "Error from Gemini API: " + resData.error.message;
+        } else {
+          replyText = "I encountered an issue processing your request from the AI model. Please check the logs.";
+        }
+        
+        return ContentService.createTextOutput(JSON.stringify({ status: "success", reply: replyText }))
+          .setMimeType(ContentService.MimeType.JSON);
+          
+      } catch (err) {
+        return ContentService.createTextOutput(JSON.stringify({ status: "success", reply: "Sorry, I had trouble contacting the Gemini API: " + err.toString() }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Invalid action" }))
       .setMimeType(ContentService.MimeType.JSON);
       

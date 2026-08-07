@@ -933,6 +933,15 @@
     <button class="chat-sugg-btn" data-query="submission">What to submit?</button>
     <button class="chat-sugg-btn" data-query="prizes">Are there rewards?</button>
   </div>
+  <!-- Back Button Container (hidden by default) -->
+  <div class="chatbot-back-container" style="display:none; padding:0.5rem 1.25rem; border-top: 1px solid var(--border-subtle);">
+    <button class="chat-back-btn" style="padding:0.35rem 0.75rem; background:rgba(255,255,255,0.05); border:1px solid var(--border-subtle); border-radius:50px; color:var(--neon-cyan); font-size:0.75rem; cursor:pointer; width:100%; text-align:center; transition:var(--transition); font-family:var(--font-mono);">← Back to Suggestions</button>
+  </div>
+  <!-- Chat Input Area -->
+  <div class="chatbot-input-area" style="display:flex; padding:0.75rem 1.25rem; border-top:1px solid var(--border-subtle); gap:0.5rem; background:rgba(0,0,0,0.2); align-items:center;">
+    <input type="text" id="chat-user-query" placeholder="Ask a custom question..." style="flex:1; background:rgba(7,7,15,0.8); border:1px solid var(--border-subtle); border-radius:50px; padding:0.5rem 1rem; color:#fff; font-size:0.8rem; outline:none; font-family:var(--font-body);" />
+    <button id="chat-send-btn" style="background:linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); border:none; border-radius:50px; padding:0.5rem 1rem; color:#000; font-family:var(--font-mono); font-size:0.75rem; font-weight:700; cursor:pointer; transition:var(--transition);">Send</button>
+  </div>
 </div>
 
 <script src="js/particles.js"></script>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenges — Buildathon 2026 AI Hackathon</title>
+  <meta name="description" content="Explore all 9 challenge tracks at Buildathon 2026. Social Welfare, AI for Impact, EdTech, Environment, AgriTech, FinTech, HealthTech, Smart City, and Cybersecurity.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/challenges.css">
+  <style>
+    .filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 2.5rem 0;
+    }
+    .filter-btn {
+      padding: 0.45rem 1.2rem;
+      border-radius: 50px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      background: rgba(0,245,255,0.07);
+    }
+  </style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+
+<!-- Nav -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">BUILDATHON</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="challenges.html">Challenges</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#timeline">Timeline</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+    <li><a href="register.html" class="nav-register-btn">Register →</a></li>
+  </ul>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- Header -->
+<section class="challenges-hero">
+  <div class="container text-center" style="position:relative;z-index:1;">
+    <span class="section-tag reveal">9 Challenge Tracks</span>
+    <h1 class="section-title reveal delay-100" style="font-size:clamp(2.5rem,6vw,4.5rem);">
+      Choose Your <span class="text-neon-cyan">Challenge</span>
+    </h1>
+    <p class="section-subtitle reveal delay-200" style="margin:0 auto 1rem;">
+      Nine cutting-edge problem domains. Each track is a gateway to real-world impact.<br>
+      Pick the one that ignites your curiosity — then build something extraordinary.
+    </p>
+    <div class="filter-bar reveal delay-300">
+      <button class="filter-btn active" data-filter="all">All Tracks</button>
+      <button class="filter-btn" data-filter="social">Social</button>
+      <button class="filter-btn" data-filter="ai">AI / ML</button>
+      <button class="filter-btn" data-filter="tech">Technology</button>
+      <button class="filter-btn" data-filter="environment">Environment</button>
+    </div>
+  </div>
+</section>
+
+<!-- Challenges Grid -->
+<section class="section" style="padding-top:40px;">
+  <div class="container">
+    <div class="challenge-grid" id="challenge-grid">
+
+      <!-- Card 1 -->
+      <div class="challenge-card reveal" id="ch1" data-tags="social ai"
+           style="--card-color:#00f5ff;--card-glow:rgba(0,245,255,0.2);--card-icon-bg:rgba(0,245,255,0.08);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 01</div>
+        <div class="challenge-card-icon">🏘️</div>
+        <div class="challenge-card-title">Connected Communities</div>
+        <div class="challenge-card-subtitle">Social Welfare Platform</div>
+        <p class="challenge-card-desc">Build digital solutions that connect citizens with government schemes, NGOs, healthcare, and social services — creating inclusive, accessible welfare ecosystems.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">GIS</span>
+            <span class="challenge-tag">ML</span>
+            <span class="challenge-tag">Blockchain</span>
+          </div>
+          <a href="challenge-1.html" class="challenge-learn-btn" id="learn-c1">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="challenge-card reveal delay-100" id="ch2" data-tags="ai"
+           style="--card-color:#7b2ff7;--card-glow:rgba(123,47,247,0.2);--card-icon-bg:rgba(123,47,247,0.08);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 02</div>
+        <div class="challenge-card-icon">🧠</div>
+        <div class="challenge-card-title">AI for Impact</div>
+        <div class="challenge-card-subtitle">Real-World AI Solutions</div>
+        <p class="challenge-card-desc">Develop responsible, explainable AI applications using ML, NLP, Computer Vision, or Generative AI that address significant, real-world problems across any domain.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">NLP</span>
+            <span class="challenge-tag">GenAI</span>
+            <span class="challenge-tag">CV</span>
+          </div>
+          <a href="challenge-2.html" class="challenge-learn-btn" id="learn-c2">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="challenge-card reveal delay-200" id="ch3" data-tags="social tech"
+           style="--card-color:#39ff14;--card-glow:rgba(57,255,20,0.2);--card-icon-bg:rgba(57,255,20,0.06);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 03</div>
+        <div class="challenge-card-icon">🎓</div>
+        <div class="challenge-card-title">Future Learning</div>
+        <div class="challenge-card-subtitle">EdTech Innovation</div>
+        <p class="challenge-card-desc">Reimagine education with AI-powered personalization, smart assessments, collaborative tools, and accessible digital classrooms for students and educators worldwide.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">EdTech</span>
+            <span class="challenge-tag">AR/VR</span>
+            <span class="challenge-tag">AI Tutor</span>
+          </div>
+          <a href="challenge-3.html" class="challenge-learn-btn" id="learn-c3">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="challenge-card reveal" id="ch4" data-tags="environment"
+           style="--card-color:#39ff14;--card-glow:rgba(57,255,20,0.2);--card-icon-bg:rgba(57,255,20,0.06);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 04</div>
+        <div class="challenge-card-icon">🌿</div>
+        <div class="challenge-card-title">Green Future</div>
+        <div class="challenge-card-subtitle">Environment & Sustainability</div>
+        <p class="challenge-card-desc">Build smart platforms for waste management, air/water quality monitoring, carbon footprint tracking, conservation systems, and community environmental action.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">IoT</span>
+            <span class="challenge-tag">GIS</span>
+            <span class="challenge-tag">Drones</span>
+          </div>
+          <a href="challenge-4.html" class="challenge-learn-btn" id="learn-c4">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="challenge-card reveal delay-100" id="ch5" data-tags="ai tech environment"
+           style="--card-color:#ff6b00;--card-glow:rgba(255,107,0,0.2);--card-icon-bg:rgba(255,107,0,0.06);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 05</div>
+        <div class="challenge-card-icon">🌾</div>
+        <div class="challenge-card-title">Smart Agriculture</div>
+        <div class="challenge-card-subtitle">AgriTech Solutions</div>
+        <p class="challenge-card-desc">Empower farmers with AI-powered crop disease detection, smart irrigation, weather advisory, livestock monitoring, and supply-chain traceability systems.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">CV</span>
+            <span class="challenge-tag">Satellite</span>
+            <span class="challenge-tag">IoT</span>
+          </div>
+          <a href="challenge-5.html" class="challenge-learn-btn" id="learn-c5">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 6: Smart Sports -->
+      <div class="challenge-card reveal delay-200" id="ch6" data-tags="tech ai"
+           style="--card-color:#39ff14;--card-glow:rgba(57,255,20,0.2);--card-icon-bg:rgba(57,255,20,0.06);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 06</div>
+        <div class="challenge-card-icon">🏆</div>
+        <div class="challenge-card-title">Smart Sports</div>
+        <div class="challenge-card-subtitle">Sports Tech Innovation</div>
+        <p class="challenge-card-desc">Digitize sports operations, improve athlete performance with data, enhance event management, and strengthen fan engagement using AI, CV, IoT, and wearable technologies.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">CV</span>
+            <span class="challenge-tag">Wearables</span>
+            <span class="challenge-tag">AR/VR</span>
+          </div>
+          <a href="challenge-6.html" class="challenge-learn-btn" id="learn-c6">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 7: Smart Healthcare -->
+      <div class="challenge-card reveal" id="ch7" data-tags="social ai"
+           style="--card-color:#00f5ff;--card-glow:rgba(0,245,255,0.2);--card-icon-bg:rgba(0,245,255,0.08);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 07</div>
+        <div class="challenge-card-icon">🏥</div>
+        <div class="challenge-card-title">Smart Healthcare</div>
+        <div class="challenge-card-subtitle">Digital Health Innovation</div>
+        <p class="challenge-card-desc">Build intelligent healthcare platforms: EHR systems, AI symptom checkers, telemedicine, remote patient monitoring, emergency response, and preventive health dashboards.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">AI/ML</span>
+            <span class="challenge-tag">Wearables</span>
+            <span class="challenge-tag">IoT</span>
+          </div>
+          <a href="challenge-7.html" class="challenge-learn-btn" id="learn-c7">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 8: Women Safety -->
+      <div class="challenge-card reveal delay-100" id="ch8" data-tags="social ai"
+           style="--card-color:#ff2d78;--card-glow:rgba(255,45,120,0.2);--card-icon-bg:rgba(255,45,120,0.06);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 08</div>
+        <div class="challenge-card-icon">🛡️</div>
+        <div class="challenge-card-title">Women Safety</div>
+        <div class="challenge-card-subtitle">SafeHer — Safety, Security & Social Impact</div>
+        <p class="challenge-card-desc">Build smart technology for women's safety: real-time SOS, AI threat detection, safe route navigation, live location sharing, trusted circle management, and incident reporting.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">AI/ML</span>
+            <span class="challenge-tag">GPS</span>
+            <span class="challenge-tag">IoT</span>
+          </div>
+          <a href="challenge-8.html" class="challenge-learn-btn" id="learn-c8">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 9: Smart Campus -->
+      <div class="challenge-card reveal delay-200" id="ch9" data-tags="tech ai social"
+           style="--card-color:#7b2ff7;--card-glow:rgba(123,47,247,0.2);--card-icon-bg:rgba(123,47,247,0.08);">
+        <div class="corner-tl"></div><div class="corner-br"></div>
+        <div class="challenge-card-number">TRACK 09</div>
+        <div class="challenge-card-icon">🏫</div>
+        <div class="challenge-card-title">Smart Campus</div>
+        <div class="challenge-card-subtitle">EdTech — Digital College Ecosystem</div>
+        <p class="challenge-card-desc">Build a unified digital campus platform: smart attendance, notices, events, complaint portal, AI chatbot, timetable management, student dashboard, and campus navigation.</p>
+        <div class="challenge-card-footer">
+          <div class="challenge-card-tags">
+            <span class="challenge-tag">AI/ML</span>
+            <span class="challenge-tag">IoT</span>
+            <span class="challenge-tag">Blockchain</span>
+          </div>
+          <a href="challenge-9.html" class="challenge-learn-btn" id="learn-c9">
+            Learn More <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /challenge-grid -->
+
+    <!-- CTA -->
+    <div class="text-center mt-4">
+      <div class="card reveal" style="max-width:600px;margin:0 auto;padding:2.5rem;">
+        <h3 style="font-family:var(--font-heading);font-size:1.4rem;margin-bottom:0.75rem;">Ready to Take the Challenge?</h3>
+        <p style="color:var(--text-secondary);margin-bottom:1.5rem;font-size:0.9rem;">Register your team and pick your track. August 13, 2026 — 9:00 AM IST.</p>
+        <a href="register.html" class="btn btn-primary" id="challenges-register-btn">🚀 Register Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">BUILDATHON</div>
+    <p>AI Hackathon · August 13, 2026 · 9:00 AM IST</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="challenges.html">Challenges</a>
+      <a href="register.html">Register</a>
+    </div>
+    <div class="divider"></div>
+    <p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">© 2026 Buildathon. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/particles.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.challenge-card').forEach(card => {
+        const tags = card.dataset.tags || '';
+        if (filter === 'all' || tags.includes(filter)) {
+          card.style.display = 'flex';
+          setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 10);
+        } else {
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.95)';
+          setTimeout(() => card.style.display = 'none', 300);
+        }
+      });
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new TiltEffect('.challenge-card', { maxTilt: 6, scale: 1.01 });
+  });
+</script>
+</body>
+</html>

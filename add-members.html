@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Team Members — Buildathon 2026</title>
+  <meta name="description" content="Add your team members for Buildathon 2026. All members will receive a confirmation email automatically.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    .members-hero {
+      padding-top: 120px;
+      padding-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .members-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(123,47,247,0.12) 0%, transparent 70%);
+    }
+    /* Step indicator */
+    .form-step-tag {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 500px;
+      margin: 0 auto 3rem;
+    }
+    .step-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; }
+    .step-circle.done { background: var(--neon-green); color: #000; box-shadow: 0 0 20px rgba(57,255,20,0.5); }
+    .step-circle.active { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px rgba(0,245,255,0.5); }
+    .step-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan)); }
+
+    /* Team summary bar */
+    .team-summary {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(0,245,255,0.2);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .summary-item { display: flex; flex-direction: column; gap: 0.2rem; }
+    .summary-label { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+    .summary-value { font-size: 0.9rem; color: var(--text-primary); font-weight: 600; }
+
+    /* Member row */
+    .member-row {
+      background: rgba(7,7,15,0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.3s;
+    }
+    .member-row:hover { border-color: rgba(123,47,247,0.3); }
+    .member-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .member-row-number { display: flex; align-items: center; gap: 0.75rem; }
+    .member-num-badge {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(123,47,247,0.15);
+      border: 1px solid rgba(123,47,247,0.4);
+      color: var(--neon-purple);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700;
+    }
+    .remove-member-btn {
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255,45,120,0.4);
+      background: rgba(255,45,120,0.08);
+      color: var(--neon-pink);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.5px;
+    }
+    .remove-member-btn:hover { background: rgba(255,45,120,0.2); }
+    .member-fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .field-error { display: none; color: var(--neon-pink); font-size: 0.72rem; margin-top: 0.3rem; font-family: var(--font-mono); }
+    #add-member-btn {
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      border-style: dashed;
+    }
+    #members-error {
+      display: none;
+      padding: 0.75rem 1.2rem;
+      background: rgba(255,45,120,0.1);
+      border: 1px solid rgba(255,45,120,0.3);
+      border-radius: var(--radius);
+      color: var(--neon-pink);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Success panel */
+    #members-success {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .success-animation { font-size: 5rem; margin-bottom: 1.5rem; animation: success-bounce 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+    @keyframes success-bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+    .success-title { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; }
+    .success-desc { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1rem; line-height: 1.7; }
+    .final-detail-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(0,245,255,0.3);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+    .final-detail-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border-subtle); font-size: 0.875rem; }
+    .final-detail-row:last-child { border-bottom: none; }
+    .final-detail-row .lbl { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
+    .final-detail-row .val { color: var(--text-primary); font-weight: 600; }
+
+    @media(max-width:600px) { .member-fields-grid { grid-template-columns: 1fr; } .team-summary { gap: 1rem; } }
+  </style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">BUILDATHON</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="challenges.html">Challenges</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#timeline">Timeline</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+  </ul>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="members-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="text-center mb-4">
+      <span class="section-tag reveal">Step 2 of 2</span>
+      <h1 class="section-title reveal delay-100" style="font-size:clamp(2rem,5vw,3.5rem);">
+        Add <span class="text-neon-purple">Team Members</span>
+      </h1>
+      <p class="section-subtitle reveal delay-200" style="margin:0 auto;">
+        All members will receive an automatic confirmation email. Add up to 3 additional members.
+      </p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="form-step-tag reveal delay-300">
+      <div class="step-circle done">✓</div>
+      <div style="text-align:center;min-width:120px;">
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-green);text-transform:uppercase;letter-spacing:1px;">Step 1</div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Leader Registered ✓</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-circle active">2</div>
+      <div style="text-align:center;min-width:120px;">
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-cyan);text-transform:uppercase;letter-spacing:1px;">Step 2</div>
+        <div style="font-size:0.8rem;color:var(--text-primary);font-weight:600;">Add Members</div>
+      </div>
+    </div>
+
+    <!-- Success Panel (hidden by default) -->
+    <div id="members-success">
+      <div class="success-animation">🎉</div>
+      <div class="success-title">You're All Set!</div>
+      <p class="success-desc">
+        Your team has been fully registered and confirmation emails have been sent to all members.<br>
+        See you at <strong>Buildathon 2026</strong> on August 13!
+      </p>
+      <div class="final-detail-card">
+        <div class="final-detail-row">
+          <span class="lbl">Team ID</span>
+          <span class="val text-neon-cyan" id="final-team-id">—</span>
+        </div>
+        <div class="final-detail-row">
+          <span class="lbl">Members Added</span>
+          <span class="val" id="final-members-count">—</span>
+        </div>
+        <div class="final-detail-row">
+          <span class="lbl">Emails Sent</span>
+          <span class="val text-neon-green">✓ Confirmation emails dispatched</span>
+        </div>
+        <div class="final-detail-row">
+          <span class="lbl">Hackathon Date</span>
+          <span class="val">August 13, 2026 · 9:00 AM IST</span>
+        </div>
+      </div>
+      <div class="flex-center gap-2" style="flex-wrap:wrap;">
+        <a href="index.html" class="btn btn-primary" id="success-home-btn">🏠 Go to Homepage</a>
+        <a href="challenges.html" class="btn btn-secondary" id="success-challenges-btn">Explore Challenges →</a>
+      </div>
+    </div>
+
+    <!-- Main Form Area -->
+    <div id="members-form-area">
+      <!-- Team Summary Bar -->
+      <div class="team-summary reveal">
+        <div class="summary-item">
+          <span class="summary-label">Team ID</span>
+          <span class="summary-value text-neon-cyan" id="team-id-display">—</span>
+        </div>
+        <div style="width:1px;height:40px;background:var(--border-subtle);"></div>
+        <div class="summary-item">
+          <span class="summary-label">Team Name</span>
+          <span class="summary-value" id="team-name-display">—</span>
+        </div>
+        <div style="width:1px;height:40px;background:var(--border-subtle);"></div>
+        <div class="summary-item">
+          <span class="summary-label">Leader</span>
+          <span class="summary-value" id="leader-name-display">—</span>
+        </div>
+        <div style="width:1px;height:40px;background:var(--border-subtle);"></div>
+        <div class="summary-item">
+          <span class="summary-label">Track</span>
+          <span class="summary-value" id="track-display" style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</span>
+        </div>
+        <div style="margin-left:auto;">
+          <span class="badge badge-cyan"><span id="member-count">1</span> member added</span>
+        </div>
+      </div>
+
+      <form id="members-form" novalidate>
+        <!-- Member rows injected here by JS -->
+        <div id="members-container"></div>
+
+        <!-- Add member button -->
+        <button type="button" class="btn btn-secondary reveal" id="add-member-btn">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Another Member
+        </button>
+
+        <div class="card reveal" style="margin-bottom:1.5rem;background:rgba(0,245,255,0.03);border-color:rgba(0,245,255,0.2);">
+          <div style="display:flex;align-items:flex-start;gap:1rem;">
+            <span style="font-size:1.5rem;">📧</span>
+            <div>
+              <h4 style="font-size:0.875rem;color:var(--text-primary);margin-bottom:0.4rem;">Automatic Confirmation Emails</h4>
+              <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">Once you submit, all team members will automatically receive a confirmation email with the team name, Team ID, challenge track, and event details.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="members-error"></div>
+
+        <button type="submit" class="btn btn-primary reveal" id="members-submit-btn" style="width:100%;justify-content:center;font-size:1rem;padding:1.1rem;">
+          📧 Save Team &amp; Send Confirmation Emails
+        </button>
+        <p style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);text-align:center;margin-top:1rem;">
+          This action will save your team to the database and send emails to all members.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-logo">BUILDATHON</div>
+    <p>AI Hackathon · August 13, 2026 · 9:00 AM IST</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="challenges.html">Challenges</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="divider"></div>
+    <p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">© 2026 Buildathon. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/particles.js"></script>
+<script src="js/main.js"></script>
+<script src="js/members.js"></script>
+</body>
+</html>

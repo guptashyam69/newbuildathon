@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buildathon 2026 — AI Hackathon | August 13</title>
+  <meta name="description" content="Buildathon is a premier AI hackathon on August 13, 2026. Build real-world solutions across 9 cutting-edge technology tracks. Register now!">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/interactive.css">
+  <style>
+    /* ── Hero Section ────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    #matrix-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.18;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 70% at 50% 100%, rgba(123,47,247,0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 20%, rgba(0,245,255,0.1) 0%, transparent 50%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.2rem;
+      background: rgba(0,245,255,0.08);
+      border: 1px solid rgba(0,245,255,0.35);
+      border-radius: 50px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--neon-cyan);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      animation: fade-in-down 0.8s ease both;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 10px var(--neon-cyan);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes fade-in-down {
+      from { opacity:0; transform:translateY(-20px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fade-in-up {
+      from { opacity:0; transform:translateY(40px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+      margin-bottom: 1rem;
+      animation: fade-in-up 0.9s 0.2s ease both;
+    }
+    .hero-title-main {
+      display: block;
+      background: linear-gradient(135deg, #fff 0%, var(--neon-cyan) 50%, var(--neon-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-title-sub {
+      display: block;
+      font-size: 0.4em;
+      font-family: var(--font-mono);
+      letter-spacing: 6px;
+      color: var(--text-secondary);
+      -webkit-text-fill-color: var(--text-secondary);
+      margin-top: 0.5rem;
+      text-transform: uppercase;
+    }
+    .hero-tagline {
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      animation: fade-in-up 0.9s 0.4s ease both;
+    }
+    .hero-type-wrapper {
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: var(--text-primary);
+      margin-bottom: 3rem;
+      animation: fade-in-up 0.9s 0.5s ease both;
+    }
+    .hero-type-wrapper span { color: var(--neon-cyan); }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fade-in-up 0.9s 0.6s ease both;
+    }
+    .hero-scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 2;
+      animation: fade-in-up 1s 1s ease both;
+    }
+    .hero-scroll-indicator span {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .scroll-mouse {
+      width: 24px; height: 38px;
+      border: 1px solid rgba(0,245,255,0.4);
+      border-radius: 12px;
+      position: relative;
+    }
+    .scroll-wheel {
+      width: 3px; height: 8px;
+      background: var(--neon-cyan);
+      border-radius: 2px;
+      position: absolute;
+      top: 6px; left: 50%;
+      transform: translateX(-50%);
+      animation: scroll-bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes scroll-bounce {
+      0%,100%{transform:translateX(-50%) translateY(0);opacity:1}
+      50%{transform:translateX(-50%) translateY(12px);opacity:0.3}
+    }
+
+    /* ── Stats Section ───────────────────────────────────── */
+    .stats-section {
+      padding: 80px 0;
+      position: relative;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 20%;
+      width: 1px; height: 60%;
+      background: var(--border-subtle);
+    }
+    .stat-item:last-child::after { display: none; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 0.5rem; }
+    .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    /* ── About Section ───────────────────────────────────── */
+    .about-section { padding: 120px 0; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .about-visual {
+      position: relative;
+      height: 500px;
+    }
+    .about-3d-cube {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px; height: 200px;
+      transform-style: preserve-3d;
+      animation: cube-spin 12s linear infinite;
+    }
+    @keyframes cube-spin {
+      from { transform: translate(-50%, -50%) rotateX(15deg) rotateY(0deg); }
+      to   { transform: translate(-50%, -50%) rotateX(15deg) rotateY(360deg); }
+    }
+    .cube-face {
+      position: absolute;
+      width: 200px; height: 200px;
+      border: 1px solid rgba(0,245,255,0.3);
+      background: rgba(0,245,255,0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: rgba(0,245,255,0.5);
+      backdrop-filter: blur(4px);
+    }
+    .cube-front  { transform: translateZ(100px); }
+    .cube-back   { transform: rotateY(180deg) translateZ(100px); }
+    .cube-left   { transform: rotateY(-90deg) translateZ(100px); }
+    .cube-right  { transform: rotateY(90deg) translateZ(100px); }
+    .cube-top    { transform: rotateX(90deg) translateZ(100px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(100px); }
+    .about-orbs {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .about-features { list-style: none; padding: 0; margin: 1.5rem 0; }
+    .about-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .about-feature-item:last-child { border-bottom: none; }
+    .feature-icon {
+      width: 36px; height: 36px; min-width: 36px;
+      border-radius: 10px;
+      background: rgba(0,245,255,0.1);
+      border: 1px solid rgba(0,245,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .feature-text h4 { font-size: 0.95rem; margin-bottom: 0.2rem; color: var(--text-primary); }
+    .feature-text p { font-size: 0.825rem; color: var(--text-secondary); }
+
+    /* ── Challenges Preview ──────────────────────────────── */
+    .challenges-preview { padding: 120px 0; background: var(--bg-secondary); }
+    .challenges-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+    .preview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+    .preview-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-color, var(--neon-cyan)), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .preview-card:hover { transform: translateY(-6px); border-color: var(--card-color, var(--neon-cyan)); box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px var(--card-glow, rgba(0,245,255,0.15)); }
+    .preview-card:hover::before { opacity: 1; }
+    .preview-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+    .preview-title { font-family: var(--font-heading); font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .preview-track { font-family: var(--font-mono); font-size: 0.65rem; color: var(--card-color, var(--neon-cyan)); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.75rem; opacity: 0.8; }
+    .preview-desc { font-size: 0.825rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── Timeline Section ────────────────────────────────── */
+    .timeline-section { padding: 120px 0; }
+    .timeline-label { font-family: var(--font-heading); font-size: 0.9rem; color: var(--text-primary); }
+    .timeline-date { font-family: var(--font-mono); font-size: 0.7rem; color: var(--neon-cyan); margin-top: 0.3rem; }
+    .timeline-desc { font-size: 0.825rem; color: var(--text-secondary); margin-top: 0.5rem; }
+
+    /* ── Prizes Section ──────────────────────────────────── */
+    .prizes-section { padding: 120px 0; background: var(--bg-secondary); }
+    .prize-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .prize-card.featured {
+      border-color: rgba(0,245,255,0.5);
+      background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(123,47,247,0.08));
+    }
+    .prize-card.featured::before {
+      content: '⭐ Most Coveted';
+      position: absolute;
+      top: 1rem; right: 1rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(0,245,255,0.15);
+      border: 1px solid rgba(0,245,255,0.4);
+      border-radius: 50px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+    }
+    .prize-medal { font-size: 3.5rem; margin-bottom: 1rem; }
+    .prize-position { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .prize-amount { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .prize-amount.gold { background: linear-gradient(135deg, #ffd700, #ff9500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .prize-amount.silver { background: linear-gradient(135deg, #c0c0c0, #a8a8a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .prize-amount.bronze { background: linear-gradient(135deg, #cd7f32, #a0522d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .prize-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+    .prize-perks { list-style: none; text-align: left; margin-top: 1.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1.5rem; }
+    .prize-perks li { font-size: 0.8rem; color: var(--text-secondary); padding: 0.3rem 0; display: flex; align-items: center; gap: 0.5rem; }
+    .prize-perks li::before { content: '✓'; color: var(--neon-green); font-weight: bold; }
+
+    /* ── FAQ Section ─────────────────────────────────────── */
+    .faq-section { padding: 120px 0; }
+    .faq-item {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .faq-item.open { border-color: rgba(0,245,255,0.4); }
+    .faq-question {
+      width: 100%; background: none; border: none;
+      padding: 1.25rem 1.5rem;
+      text-align: left; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      color: var(--text-primary); font-family: var(--font-body);
+      font-size: 1rem; font-weight: 500;
+      transition: var(--transition);
+    }
+    .faq-question:hover { color: var(--neon-cyan); }
+    .faq-question .faq-icon { font-size: 1.2rem; color: var(--neon-cyan); transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .faq-answer-inner { padding: 0 1.5rem 1.25rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+
+    /* ── CTA Section ─────────────────────────────────────── */
+    .cta-section {
+      padding: 140px 0;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(123,47,247,0.2) 0%, transparent 70%);
+    }
+    .cta-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; margin-bottom: 1.5rem; }
+    .cta-subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 3rem; }
+
+    /* ── Countdown Section ───────────────────────────────── */
+    .countdown-section { padding: 100px 0; border-top: 1px solid var(--border-subtle); text-align: center; }
+    .countdown-label-top { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; }
+
+    @media(max-width:900px){
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+      .about-grid{grid-template-columns:1fr;}
+      .about-visual{height:300px;}
+      .challenges-preview-grid{grid-template-columns:repeat(2,1fr);}
+    }
+    @media(max-width:600px){
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .challenges-preview-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo">BUILDATHON</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="challenges.html">Challenges</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#timeline">Timeline</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+    <li><a href="register.html" class="nav-register-btn">Register →</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────── -->
+<section class="hero" id="hero" aria-label="Hero section">
+  <canvas id="matrix-canvas"></canvas>
+  <div class="grid-bg"></div>
+  <div class="hero-overlay"></div>
+
+  <!-- Floating orbs -->
+  <div class="orb orb-cyan" style="width:400px;height:400px;top:-100px;left:-100px;opacity:0.12;" data-parallax="0.03"></div>
+  <div class="orb orb-purple" style="width:500px;height:500px;bottom:-150px;right:-100px;opacity:0.10;" data-parallax="0.02"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">🤖 AI Hackathon &nbsp;|&nbsp; August 13, 2026 &nbsp;|&nbsp; 9:00 AM IST</div>
+
+    <h1 class="hero-title">
+      <span class="hero-title-main glitch" data-text="BUILDATHON">BUILDATHON</span>
+      <span class="hero-title-sub">AI • INNOVATE • IMPACT</span>
+    </h1>
+
+    <p class="hero-tagline">
+      Where code meets creativity. Build intelligent solutions that reshape the future.<br>
+      9 challenge tracks. 4 hours. Unlimited possibilities.
+    </p>
+
+    <div class="hero-type-wrapper">
+      Hack for &nbsp;<span id="typewriter-text">AI Innovation</span><span class="typewriter-cursor"></span>
+    </div>
+
+    <div class="hero-actions">
+      <a href="register.html" class="btn btn-primary" id="hero-register-btn">
+        🚀 Register Now
+      </a>
+      <a href="challenges.html" class="btn btn-secondary" id="hero-challenges-btn">
+        🔍 View Challenges
+      </a>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- ── Countdown ───────────────────────────────────────────── -->
+<section class="countdown-section" id="countdown">
+  <div class="container">
+    <p class="countdown-label-top">Hackathon begins in</p>
+    <div class="countdown-wrapper reveal">
+      <div class="countdown-block">
+        <span class="countdown-value" id="cd-days">00</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-block">
+        <span class="countdown-value" id="cd-hours">00</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-block">
+        <span class="countdown-value" id="cd-mins">00</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-block">
+        <span class="countdown-value" id="cd-secs">00</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ───────────────────────────────────────────────── -->
+<section class="stats-section" aria-label="Event statistics">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-icon">👥</div>
+        <div class="counter-number" data-count="500" data-suffix="+">0+</div>
+        <div class="stat-label">Participants</div>
+      </div>
+      <div class="stat-item reveal delay-200">
+        <div class="stat-icon">🏆</div>
+        <div class="counter-number" data-count="9">0</div>
+        <div class="stat-label">Challenge Tracks</div>
+      </div>
+      <div class="stat-item reveal delay-400">
+        <div class="stat-icon">🎁</div>
+        <div style="font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--neon-purple); letter-spacing:0.5px; text-shadow:0 0 10px rgba(123,47,247,0.4);">Surprise!</div>
+        <div class="stat-label">Mega Rewards</div>
+      </div>
+      <div class="stat-item reveal delay-600">
+        <div class="stat-icon">⏱️</div>
+        <div class="counter-number" data-count="4" data-suffix="H">0H</div>
+        <div class="stat-label">Hacking Time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Hacking Sandbox (Game) ───────────────────────────────── -->
+<section class="game-section section" id="sandbox" aria-label="Coding Sandbox Hacking Game">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="section-tag reveal">AI Webpage Sandbox</span>
+      <h2 class="section-title reveal delay-100">AI Vibe Builder 🪄</h2>
+      <p class="section-subtitle reveal delay-200" style="margin:0 auto 1.5rem;">
+        Generate prototype webpages instantly from a single text prompt. Type your idea, click build, and view the fully-responsive mockup!
+      </p>
+    </div>
+
+    <div class="game-card reveal" style="position:relative;">
+      <!-- Prompt Deck -->
+      <div class="prompt-input-deck">
+        <div class="prompt-input-wrapper">
+          <input type="text" id="vibe-prompt-input" placeholder="e.g. 'Build a dark cyberpunk portfolio for a designer' or 'A green eco organic shop'..." value="">
+          <button id="vibe-build-btn">🚀 Build Webpage</button>
+        </div>
+        <div class="prompt-suggestions">
+          <button class="vibe-sugg-chip" data-prompt="Build a dark cyberpunk portfolio for a designer">🌆 Cyberpunk Portfolio</button>
+          <button class="vibe-sugg-chip" data-prompt="A green eco-friendly organic shop for sustainable goods">🌿 Green Eco Shop</button>
+          <button class="vibe-sugg-chip" data-prompt="Create a clean light SaaS metrics dashboard">📈 Minimalist SaaS Dashboard</button>
+          <button class="vibe-sugg-chip" data-prompt="Build a premium luxury gold landing page">✨ Premium Luxury Landing</button>
+        </div>
+      </div>
+
+      <!-- Game status / stats bar -->
+      <div class="game-header-bar" style="margin-top: 1.5rem;">
+        <div class="game-stat">
+          <span class="game-stat-label">Builder Status:</span>
+          <span class="game-stat-value text-neon-pink" id="game-core-status" style="font-weight:700;">WAITING_FOR_PROMPT</span>
+        </div>
+        <div class="game-stat">
+          <span class="game-stat-label">Active Theme:</span>
+          <span class="game-stat-value text-neon-cyan" id="game-theme-val" style="font-weight:700;font-family:var(--font-mono);">NONE</span>
+        </div>
+        <div class="game-stat">
+          <span class="game-stat-label">Active Layout:</span>
+          <span class="game-stat-value text-neon-orange" id="game-layout-val" style="font-weight:700;font-family:var(--font-mono);">NONE</span>
+        </div>
+      </div>
+
+      <div class="game-workspace">
+        <!-- App Preview Mockup Window -->
+        <div class="editor-window">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="window-title">App Sandbox Mockup (live_render.html)</span>
+          </div>
+          <div class="editor-body" style="display:flex; justify-content:center; align-items:center; min-height:280px; background:#07070f; position: relative;">
+            <!-- Phone Mockup -->
+            <div class="vibe-phone-mockup" id="vibe-preview-card">
+              <div class="vibe-phone-header">
+                <span class="vibe-phone-time">09:41</span>
+                <span class="vibe-phone-notch"></span>
+                <span class="vibe-phone-signal">📶🔋</span>
+              </div>
+              <div class="vibe-phone-body">
+                <div class="vibe-app-icon" id="vibe-icon">👾</div>
+                <h4 class="vibe-app-title" id="vibe-title">Prototype App</h4>
+                <p class="vibe-app-desc" id="vibe-desc">Type your prompt in the box above to generate webpage previews...</p>
+                <span class="vibe-app-badge" id="vibe-badge">AI Core: Idle</span>
+              </div>
+              <!-- Inline Phone Render View -->
+              <div class="vibe-phone-render-view" id="vibe-phone-render-view" style="display: none;">
+                <!-- Live Rendered Webpage injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal Console -->
+        <div class="console-window">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot green"></span>
+            </div>
+            <span class="window-title">vibe_compiler.log</span>
+          </div>
+          <div class="console-body" id="game-console-log">
+            <div class="console-line text-muted">&gt; System online. Enter prompt and compile webpage.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <div class="game-action-panel text-center">
+        <button class="btn btn-primary" id="vibe-preview-btn" disabled style="opacity: 0.5; filter: grayscale(1); cursor: not-allowed; transition: all 0.3s;">
+          👁️ View Full Screen Preview
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ───────────────────────────────────────────────── -->
+<section class="about-section section" id="about" aria-label="About Buildathon">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <span class="section-tag reveal">About the Event</span>
+        <h2 class="section-title reveal delay-100">What is<br>Buildathon?</h2>
+        <p class="section-subtitle reveal delay-200">
+          Buildathon is a high-intensity AI hackathon designed to challenge students and innovators to build
+          real-world solutions across 9 technology domains. From Agriculture to Cybersecurity — your ideas matter.
+        </p>
+        <ul class="about-features mt-3">
+          <li class="about-feature-item reveal delay-200">
+            <div class="feature-icon">🤖</div>
+            <div class="feature-text">
+              <h4>AI-First Approach</h4>
+              <p>Leverage Machine Learning, NLP, Computer Vision, and Generative AI to solve real problems.</p>
+            </div>
+          </li>
+          <li class="about-feature-item reveal delay-300">
+            <div class="feature-icon">🌍</div>
+            <div class="feature-text">
+              <h4>Real-World Impact</h4>
+              <p>9 carefully curated challenge tracks covering critical sectors of society and technology.</p>
+            </div>
+          </li>
+          <li class="about-feature-item reveal delay-400">
+            <div class="feature-icon">🎓</div>
+            <div class="feature-text">
+              <h4>Open to All Students</h4>
+              <p>Teams of 2-4 students. All academic years, streams, and colleges welcome.</p>
+            </div>
+          </li>
+          <li class="about-feature-item reveal delay-500">
+            <div class="feature-icon">🏅</div>
+            <div class="feature-text">
+              <h4>Exciting Rewards & Recognition</h4>
+              <p>Surprise rewards, certificates, mentorship opportunities, and industry recognition.</p>
+            </div>
+          </li>
+        </ul>
+        <a href="register.html" class="btn btn-primary mt-4 reveal delay-600">Join Buildathon →</a>
+      </div>
+
+      <!-- 3D Visual -->
+      <div class="about-visual reveal-right">
+        <div style="perspective:800px; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+          <div class="about-3d-cube">
+            <div class="cube-face cube-front">AI</div>
+            <div class="cube-face cube-back">ML</div>
+            <div class="cube-face cube-left">IoT</div>
+            <div class="cube-face cube-right">Cloud</div>
+            <div class="cube-face cube-top">Data</div>
+            <div class="cube-face cube-bottom">Build</div>
+          </div>
+        </div>
+        <!-- Ring decorations -->
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+          <div style="width:360px;height:360px;border-radius:50%;border:1px solid rgba(0,245,255,0.1);animation:pulse-ring 3s ease-in-out infinite;"></div>
+        </div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+          <div style="width:280px;height:280px;border-radius:50%;border:1px dashed rgba(123,47,247,0.2);animation:rotate-ring 20s linear infinite;"></div>
+        </div>
+        <!-- Floating tags -->
+        <div class="float" style="position:absolute;top:10%;left:5%;padding:0.4rem 0.8rem;background:rgba(0,245,255,0.1);border:1px solid rgba(0,245,255,0.3);border-radius:8px;font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-cyan);">GenAI 🤖</div>
+        <div class="float-slow" style="position:absolute;bottom:15%;left:8%;padding:0.4rem 0.8rem;background:rgba(123,47,247,0.1);border:1px solid rgba(123,47,247,0.3);border-radius:8px;font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);">LLM 🧠</div>
+        <div class="float" style="position:absolute;top:20%;right:5%;padding:0.4rem 0.8rem;background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);border-radius:8px;font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-green);animation-delay:1s;">CV 👁️</div>
+        <div class="float-slow" style="position:absolute;bottom:20%;right:5%;padding:0.4rem 0.8rem;background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);border-radius:8px;font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-orange);animation-delay:0.5s;">IoT 🌐</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Challenges Preview ───────────────────────────────────── -->
+<section class="challenges-preview" id="challenges-preview" aria-label="Challenge tracks preview">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-tag reveal">9 Challenge Tracks</span>
+      <h2 class="section-title reveal delay-100">Pick Your Arena</h2>
+      <p class="section-subtitle reveal delay-200" style="margin: 0 auto 0.5rem;">
+        Choose from 9 cutting-edge technology domains. Each track presents a unique problem that demands creative, AI-powered solutions.
+      </p>
+    </div>
+    <div class="challenges-preview-grid">
+      <a href="challenge-1.html" class="preview-card reveal delay-100" id="prev-c1" style="--card-color:#00f5ff;--card-glow:rgba(0,245,255,0.15);">
+        <div class="preview-icon">🏘️</div>
+        <div class="preview-title">Connected Communities</div>
+        <div class="preview-track">Social Welfare</div>
+        <div class="preview-desc">Digital platforms bridging citizens with government schemes, NGOs, healthcare, and social services.</div>
+      </a>
+      <a href="challenge-2.html" class="preview-card reveal delay-200" id="prev-c2" style="--card-color:#7b2ff7;--card-glow:rgba(123,47,247,0.15);">
+        <div class="preview-icon">🧠</div>
+        <div class="preview-title">AI for Impact</div>
+        <div class="preview-track">Real-World AI</div>
+        <div class="preview-desc">Build responsible, scalable AI systems for healthcare, agriculture, governance, and more.</div>
+      </a>
+      <a href="challenge-3.html" class="preview-card reveal delay-300" id="prev-c3" style="--card-color:#39ff14;--card-glow:rgba(57,255,20,0.15);">
+        <div class="preview-icon">🎓</div>
+        <div class="preview-title">Future Learning</div>
+        <div class="preview-track">EdTech</div>
+        <div class="preview-desc">Personalized, accessible, and collaborative EdTech platforms for students and educators.</div>
+      </a>
+      <a href="challenge-4.html" class="preview-card reveal delay-100" id="prev-c4" style="--card-color:#39ff14;--card-glow:rgba(57,255,20,0.15);">
+        <div class="preview-icon">🌿</div>
+        <div class="preview-title">Green Future</div>
+        <div class="preview-track">Environment & Sustainability</div>
+        <div class="preview-desc">Smart solutions for waste management, air quality, conservation, and climate resilience.</div>
+      </a>
+      <a href="challenge-5.html" class="preview-card reveal delay-200" id="prev-c5" style="--card-color:#ff6b00;--card-glow:rgba(255,107,0,0.15);">
+        <div class="preview-icon">🌾</div>
+        <div class="preview-title">Smart Agriculture</div>
+        <div class="preview-track">AgriTech</div>
+        <div class="preview-desc">AI-powered crop disease detection, smart irrigation, yield prediction, and precision farming.</div>
+      </a>
+      <a href="challenge-6.html" class="preview-card reveal delay-300" id="prev-c6" style="--card-color:#39ff14;--card-glow:rgba(57,255,20,0.15);">
+        <div class="preview-icon">🏆</div>
+        <div class="preview-title">Smart Sports</div>
+        <div class="preview-track">Sports Tech Innovation</div>
+        <div class="preview-desc">Digitize sports operations, boost athlete performance with AI/CV/IoT, enhance event management, and increase fan engagement.</div>
+      </a>
+      <a href="challenge-7.html" class="preview-card reveal delay-100" id="prev-c7" style="--card-color:#00f5ff;--card-glow:rgba(0,245,255,0.15);">
+        <div class="preview-icon">🏥</div>
+        <div class="preview-title">Smart Healthcare</div>
+        <div class="preview-track">Digital Health Innovation</div>
+        <div class="preview-desc">AI diagnostics, EHR systems, telemedicine, remote patient monitoring, emergency response, and preventive health dashboards.</div>
+      </a>
+      <a href="challenge-8.html" class="preview-card reveal delay-200" id="prev-c8" style="--card-color:#ff2d78;--card-glow:rgba(255,45,120,0.15);">
+        <div class="preview-icon">🛡️</div>
+        <div class="preview-title">Women Safety</div>
+        <div class="preview-track">SafeHer — Safety, Security & Social Impact</div>
+        <div class="preview-desc">Smart SOS systems, AI threat detection, live location sharing, safe navigation, and trusted circle management for women's safety.</div>
+      </a>
+      <a href="challenge-9.html" class="preview-card reveal delay-300" id="prev-c9" style="--card-color:#7b2ff7;--card-glow:rgba(123,47,247,0.15);">
+        <div class="preview-icon">🏫</div>
+        <div class="preview-title">Smart Campus</div>
+        <div class="preview-track">EdTech — Digital College Ecosystem</div>
+        <div class="preview-desc">Unified digital campus: smart attendance, notices, timetables, complaints, AI chatbot, student dashboards, and campus navigation.</div>
+      </a>
+    </div>
+    <div class="text-center mt-4">
+      <a href="challenges.html" class="btn btn-secondary reveal">View All 9 Challenges →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Timeline ─────────────────────────────────────────────── -->
+<section class="timeline-section" id="timeline" aria-label="Event timeline">
+  <div class="container">
+    <div class="text-center mb-4">
+      <span class="section-tag reveal">Schedule</span>
+      <h2 class="section-title reveal delay-100">Event Timeline (4-Hour Hackathon)</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-content reveal-left">
+          <div class="timeline-label">Registrations Open</div>
+          <div class="timeline-date">📅 Now — August 10, 2026</div>
+          <p class="timeline-desc">Team leader registers and adds team members. Teams consist of 2–4 members.</p>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-empty"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-empty"></div>
+        <div class="timeline-dot" style="background:var(--neon-purple);box-shadow:0 0 20px var(--neon-purple);"></div>
+        <div class="timeline-content reveal-right">
+          <div class="timeline-label">09:00 AM IST — Round 1 Kickoff</div>
+          <div class="timeline-date">🧠 Problem Solving Challenge</div>
+          <p class="timeline-desc">Teams receive unique real-world problem statements, brainstorm a practical solution, and explain it briefly to judges. Top 5–6 teams qualify.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content reveal-left">
+          <div class="timeline-label">10:30 AM IST — Round 2</div>
+          <div class="timeline-date">💻 AI Website Building Challenge</div>
+          <p class="timeline-desc">Qualified teams build a functional webpage based on their Round 1 concept using prompt-driven website builders. Top 3 teams qualify.</p>
+        </div>
+        <div class="timeline-dot" style="background:var(--neon-green);box-shadow:0 0 20px var(--neon-green);"></div>
+        <div class="timeline-empty"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-empty"></div>
+        <div class="timeline-dot" style="background:var(--neon-orange);box-shadow:0 0 20px var(--neon-orange);"></div>
+        <div class="timeline-content reveal-right">
+          <div class="timeline-label">12:00 PM IST — Round 3</div>
+          <div class="timeline-date">📢 Pitch & Live Demonstration</div>
+          <p class="timeline-desc">Finalist teams present their website prototypes, explain target users, features, and future scope before the expert judging panel with Q&A.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content reveal-left">
+          <div class="timeline-label">01:00 PM IST — Winner Announcement</div>
+          <div class="timeline-date">🏆 Judging & Award Distribution</div>
+          <p class="timeline-desc">Winners, runners-up announced! Awards, trophies, and certificates distribution.</p>
+        </div>
+        <div class="timeline-dot" style="background:var(--neon-pink);box-shadow:0 0 20px var(--neon-pink);"></div>
+        <div class="timeline-empty"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ──────────────────────────────────────────────────── -->
+<section class="faq-section" id="faq" aria-label="Frequently asked questions">
+  <div class="container" style="max-width:800px;">
+    <div class="text-center mb-4">
+      <span class="section-tag reveal">Got Questions?</span>
+      <h2 class="section-title reveal delay-100">FAQ</h2>
+    </div>
+    <div class="reveal">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Who can participate? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Any student currently enrolled in a recognized college or university. All years, streams, and disciplines are welcome. Teams must be 2–4 members.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Do all team members need to register separately? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">No. Only the <strong>team leader</strong> fills the main registration form. After that, you'll be redirected to add your team members. All members receive a confirmation email automatically.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">What technology stack can we use? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">You have complete technical freedom! Any frontend, backend, database, cloud platform, AI/ML framework, or open-source tool is allowed. You can also use LLM APIs, GIS tools, IoT platforms, and more.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Is AI-assisted development allowed? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes, AI-assisted development is permitted as long as participants can explain their implementation, understand the code, and the solution is original to your team's concept.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">Can we work on the project before the hackathon? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">No. All coding and development must begin only after the problem statements are released on August 13, 2026 at 9:00 AM. Planning, research, and team formation beforehand is fine.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">What are the judging criteria? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">Projects are judged on: Innovation & Creativity (25%), Technical Implementation (25%), Real-World Impact (20%), Completeness & Demo (15%), Scalability (10%), and Presentation Quality (5%).</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false">What should we submit at the end? <span class="faq-icon">+</span></button>
+        <div class="faq-answer"><div class="faq-answer-inner">A working prototype (web/mobile/desktop), source code repository, project presentation (PPT), system architecture diagram, database design, UI/UX design files, project documentation, and a live demonstration.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Check-In Tool ───────────────────────────────────────── -->
+<section class="section" id="checkin" aria-label="Team Registration Status Check-in">
+  <div class="container">
+    <div class="checkin-card reveal">
+      <div class="text-center mb-3">
+        <span class="section-tag" style="border-color:var(--neon-green);color:var(--neon-green);background:rgba(57,255,20,0.06);">Status Verification</span>
+        <h3 style="font-family:var(--font-heading);font-size:1.8rem;margin-top:0.5rem;">Check Your Registration Status</h3>
+        <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem;">Enter your unique Team ID to verify sheet database registration.</p>
+      </div>
+      <form id="checkin-form">
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <input type="text" name="teamIdQuery" class="form-input" placeholder="e.g. 5D9A7C12FE" style="flex:1;min-width:200px;text-transform:uppercase;" required>
+          <button type="submit" class="btn btn-secondary" style="border-color:var(--neon-green);color:var(--neon-green);padding:0.85rem 2rem;">🔍 Verify Status</button>
+        </div>
+      </form>
+      <div id="checkin-error" style="display:none;margin-top:1rem;color:var(--neon-pink);font-family:var(--font-mono);font-size:0.8rem;"></div>
+      <div class="checkin-results">
+        <h4 style="font-family:var(--font-heading);font-size:1.1rem;margin-bottom:1rem;color:var(--text-primary);">Verification Results</h4>
+        <div style="background:rgba(0,0,0,0.3);border-radius:var(--radius);padding:1.25rem;">
+          <div class="success-detail-row"><span>Team ID</span><span id="ci-team-id" class="text-neon-cyan">—</span></div>
+          <div class="success-detail-row"><span>Team Name</span><span id="ci-team-name">—</span></div>
+          <div class="success-detail-row"><span>Leader</span><span id="ci-leader">—</span></div>
+          <div class="success-detail-row"><span>Track</span><span id="ci-track">—</span></div>
+          <div class="success-detail-row"><span>Status</span><span id="ci-status">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final CTA ─────────────────────────────────────────────── -->
+<section class="cta-section" id="cta" aria-label="Call to action">
+  <div class="container">
+    <div class="scanline"></div>
+    <span class="section-tag reveal">Limited Seats</span>
+    <h2 class="cta-title holo-text reveal delay-100">Ready to Build<br>the Future?</h2>
+    <p class="cta-subtitle reveal delay-200">
+      August 13, 2026 · 9:00 AM IST · Register before seats fill up!
+    </p>
+    <div class="flex-center gap-2 reveal delay-300" style="flex-wrap:wrap;">
+      <a href="register.html" class="btn btn-primary" id="cta-register-btn" style="font-size:1.1rem;padding:1.1rem 2.8rem;">
+        🚀 Register Your Team
+      </a>
+      <a href="challenges.html" class="btn btn-secondary" id="cta-challenges-btn" style="font-size:1.1rem;padding:1.1rem 2.8rem;">
+        Explore Challenges →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">BUILDATHON</div>
+    <p>AI Hackathon · August 13, 2026 · 9:00 AM IST</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="challenges.html">Challenges</a>
+      <a href="register.html">Register</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="divider"></div>
+    <p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">
+      © 2026 Buildathon. Hack responsibly. Build impactfully.
+    </p>
+  </div>
+</footer>
+
+<!-- Floating Chatbot Widget -->
+<div class="chatbot-trigger" aria-label="Open AI FAQ Chatbot">
+  <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+</div>
+
+<div class="chatbot-window">
+  <div class="chatbot-header">
+    <h4>🤖 Buildathon FAQ Guide</h4>
+    <button class="chatbot-close" aria-label="Close Chatbot">✕</button>
+  </div>
+  <div class="chatbot-messages"></div>
+  <div class="chatbot-suggestions">
+    <button class="chat-sugg-btn" data-query="eligibility">Who can participate?</button>
+    <button class="chat-sugg-btn" data-query="registration">How to register?</button>
+    <button class="chat-sugg-btn" data-query="tracks">Challenge tracks?</button>
+    <button class="chat-sugg-btn" data-query="submission">What to submit?</button>
+    <button class="chat-sugg-btn" data-query="prizes">Are there rewards?</button>
+  </div>
+</div>
+
+<script src="js/particles.js"></script>
+<script src="js/main.js"></script>
+<script src="js/interactive.js"></script>
+<script>
+  // Init Matrix Rain
+  new MatrixRain('matrix-canvas');
+  // Init Tilt on preview cards
+  document.addEventListener('DOMContentLoaded', () => {
+    new TiltEffect('.preview-card', { maxTilt: 8, scale: 1.02 });
+    new TiltEffect('.prize-card', { maxTilt: 8, scale: 1.02 });
+  });
+</script>
+
+<!-- ── Full-Screen Page Preview Overlay ─────────────────────────── -->
+<div class="full-preview-overlay" id="full-preview-overlay" style="display: none;">
+  <div class="preview-browser-bar">
+    <div class="preview-dots">
+      <span class="dot red" id="close-preview-dot"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+    <div class="preview-tabs">
+      <button class="preview-tab active" id="tab-live-btn">👁️ Live Preview</button>
+      <button class="preview-tab" id="tab-code-btn">📄 View Code</button>
+    </div>
+    <div class="preview-address-bar">
+      <span>https://vibe-builder.buildathon/site-preview</span>
+    </div>
+    <div class="preview-actions" style="display:flex; gap:0.5rem; align-items:center;">
+      <button class="preview-btn-action" id="btn-download-site" title="Download standalone HTML file">💾 Download Site</button>
+      <button class="preview-close-btn" id="close-preview-btn">✕ Close</button>
+    </div>
+  </div>
+  <div class="preview-browser-body" style="position:relative; flex:1; overflow:hidden; display:flex; flex-direction:column;">
+    <div class="preview-view-panel active" id="preview-render-panel" style="width:100%; height:100%; overflow-y:auto; flex:1;">
+      <div id="preview-render-body"></div>
+    </div>
+    <div class="preview-view-panel" id="preview-code-panel" style="display:none; width:100%; height:100%; overflow-y:auto; background:#020208; padding:2rem; flex:1;">
+      <div style="max-width:900px; margin:0 auto; position:relative;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h4 style="font-family:var(--font-mono); color:var(--text-secondary); font-size:0.85rem;">Stand-alone Standalone HTML/CSS Code Output</h4>
+          <button class="preview-btn-action" id="btn-copy-code" style="padding:0.4rem 1rem; font-size:0.75rem;">📋 Copy Code</button>
+        </div>
+        <pre style="margin:0; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:1.5rem; border-radius:8px; overflow-x:auto;"><code id="code-output-display" style="font-family:var(--font-mono); font-size:0.78rem; color:#5cf2ff; line-height:1.6; white-space:pre;"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Your Team — Buildathon 2026</title>
+  <meta name="description" content="Register your team for Buildathon 2026 AI Hackathon. Team leader registration form.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    .register-hero {
+      padding-top: 120px;
+      padding-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .register-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(0,245,255,0.1) 0%, transparent 70%);
+    }
+    .register-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 3rem;
+      align-items: start;
+    }
+    .form-card {
+      background: rgba(7,7,15,0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    .form-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field-error { display: none; color: var(--neon-pink); font-size: 0.72rem; margin-top: 0.3rem; font-family: var(--font-mono); }
+    .form-group.focused .form-label { color: var(--neon-cyan); }
+    .form-step-tag {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .step-circle {
+      width: 36px; height: 36px; min-width: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;
+    }
+    .step-circle.active { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px rgba(0,245,255,0.5); }
+    .step-circle.inactive { border: 1px solid var(--border-subtle); color: var(--text-muted); }
+    .step-line { flex: 1; height: 1px; background: var(--border-subtle); }
+    #success-panel {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .success-title { font-family: var(--font-heading); font-size: 2rem; color: var(--neon-green); margin-bottom: 1rem; }
+    .success-detail-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.75rem 1.2rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+    .success-detail-row span:first-child { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
+    .success-detail-row span:last-child { color: var(--text-primary); font-weight: 600; }
+    #error-msg {
+      display: none;
+      padding: 0.75rem 1.2rem;
+      background: rgba(255,45,120,0.1);
+      border: 1px solid rgba(255,45,120,0.3);
+      border-radius: var(--radius);
+      color: var(--neon-pink);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    /* Sidebar info */
+    .info-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.5rem; }
+    .info-card h4 { font-family: var(--font-mono); font-size: 0.72rem; color: var(--neon-cyan); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1rem; }
+    .info-step { display: flex; gap: 1rem; margin-bottom: 1.25rem; align-items: flex-start; }
+    .info-step-num { width: 28px; height: 28px; min-width: 28px; border-radius: 50%; background: rgba(0,245,255,0.1); border: 1px solid rgba(0,245,255,0.3); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.7rem; color: var(--neon-cyan); font-weight: 700; }
+    .info-step-text h5 { font-size: 0.875rem; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .info-step-text p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .terms-note { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 1rem; font-family: var(--font-mono); }
+    @media(max-width:900px) { .register-grid { grid-template-columns: 1fr; } }
+    @media(max-width:600px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">BUILDATHON</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="challenges.html">Challenges</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#timeline">Timeline</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+  </ul>
+  <button class="nav-hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="register-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="text-center mb-4">
+      <span class="section-tag reveal">Step 1 of 2</span>
+      <h1 class="section-title reveal delay-100" style="font-size:clamp(2rem,5vw,3.5rem);">
+        Team Leader <span class="text-neon-cyan">Registration</span>
+      </h1>
+      <p class="section-subtitle reveal delay-200" style="margin:0 auto;">
+        Only the team leader fills this form. You'll add team members in the next step.
+      </p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="form-step-tag reveal delay-300" style="max-width:500px;margin:0 auto 3rem;">
+      <div class="step-circle active">1</div>
+      <div class="step-line" style="background:linear-gradient(90deg,rgba(0,245,255,0.5),rgba(0,245,255,0.1));"></div>
+      <div style="text-align:center;min-width:120px;">
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-cyan);text-transform:uppercase;letter-spacing:1px;">Step 1</div>
+        <div style="font-size:0.8rem;color:var(--text-primary);font-weight:600;">Leader Details</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-circle inactive">2</div>
+      <div style="text-align:center;min-width:120px;">
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Step 2</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);">Add Members</div>
+      </div>
+    </div>
+
+    <div class="register-grid">
+      <!-- Form -->
+      <div class="form-card reveal">
+        <div id="form-wrapper">
+          <form id="registration-form" novalidate>
+            <!-- Team Info -->
+            <div style="margin-bottom:2rem;">
+              <h3 style="font-family:var(--font-heading);font-size:1rem;color:var(--neon-cyan);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;">
+                <span style="font-size:1.2rem;">🏷️</span> Team Information
+              </h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="teamName">Team Name *</label>
+                  <input type="text" id="teamName" name="teamName" class="form-input" placeholder="e.g. Quantum Coders" required>
+                  <span class="field-error"></span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="teamSize">Team Size *</label>
+                  <select id="teamSize" name="teamSize" class="form-select form-input" required>
+                    <option value="">Select size</option>
+                    <option value="2">2 Members</option>
+                    <option value="3">3 Members</option>
+                    <option value="4">4 Members</option>
+                    
+                  </select>
+                  <span class="field-error"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="track">Challenge Track *</label>
+                <select id="track" name="track" class="form-select form-input" required>
+                  <option value="">Select your challenge track</option>
+                  <option value="Track 01 — Connected Communities (Social Welfare)">Track 01 — Connected Communities (Social Welfare)</option>
+                  <option value="Track 02 — AI for Impact (Real-World AI)">Track 02 — AI for Impact (Real-World AI)</option>
+                  <option value="Track 03 — Future Learning (EdTech)">Track 03 — Future Learning (EdTech)</option>
+                  <option value="Track 04 — Green Future (Environment & Sustainability)">Track 04 — Green Future (Environment & Sustainability)</option>
+                  <option value="Track 05 — Smart Agriculture (AgriTech)">Track 05 — Smart Agriculture (AgriTech)</option>
+                  <option value="Track 06 — Smart Sports (Sports Tech)">Track 06 — Smart Sports (Sports Tech)</option>
+                  <option value="Track 07 — Smart Healthcare (Digital Health)">Track 07 — Smart Healthcare (Digital Health)</option>
+                  <option value="Track 08 — Women Safety (SafeHer)">Track 08 — Women Safety (SafeHer)</option>
+                  <option value="Track 09 — Smart Campus (EdTech)">Track 09 — Smart Campus (EdTech)</option>
+                </select>
+                <span class="field-error"></span>
+              </div>
+              <p id="team-size-note" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;"></p>
+            </div>
+
+            <!-- Leader Info -->
+            <div style="margin-bottom:2rem;padding-top:1.5rem;border-top:1px solid var(--border-subtle);">
+              <h3 style="font-family:var(--font-heading);font-size:1rem;color:var(--neon-cyan);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;">
+                <span style="font-size:1.2rem;">👤</span> Team Leader Details
+              </h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="leaderName">Full Name *</label>
+                  <input type="text" id="leaderName" name="leaderName" class="form-input" placeholder="Your full name" required>
+                  <span class="field-error"></span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="classYear">Class / Year *</label>
+                  <input type="text" id="classYear" name="classYear" class="form-input" placeholder="e.g. 3rd Year B.Tech CS" required>
+                  <span class="field-error"></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="college">College / Institution *</label>
+                <input type="text" id="college" name="college" class="form-input" placeholder="Your college name" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="leaderEmail">Email Address *</label>
+                  <input type="email" id="leaderEmail" name="leaderEmail" class="form-input" placeholder="your@email.com" required>
+                  <span class="field-error"></span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="leaderPhone">Phone Number *</label>
+                  <input type="tel" id="leaderPhone" name="leaderPhone" class="form-input" placeholder="10-digit mobile" required>
+                  <span class="field-error"></span>
+                </div>
+              </div>
+            </div>
+
+            <div id="error-msg"></div>
+
+            <button type="submit" class="btn btn-primary" id="submit-btn" style="width:100%;justify-content:center;font-size:1rem;padding:1rem;">
+              <span>🚀</span> Submit Registration &amp; Continue
+            </button>
+            <p class="terms-note">By submitting, you agree to Buildathon's terms. Team registration is binding.</p>
+          </form>
+        </div>
+
+        <!-- Success Panel -->
+        <div id="success-panel">
+          <div class="success-icon">✅</div>
+          <div class="success-title">Registration Successful!</div>
+          <p style="color:var(--text-secondary);margin-bottom:2rem;">Your team has been registered. Redirecting to add team members…</p>
+          <div style="background:rgba(0,0,0,0.3);border-radius:var(--radius);padding:1.5rem;text-align:left;">
+            <div class="success-detail-row"><span>Team ID</span><span id="sp-team-id" class="text-neon-cyan">—</span></div>
+            <div class="success-detail-row"><span>Team Name</span><span id="sp-team-name">—</span></div>
+            <div class="success-detail-row"><span>Leader</span><span id="sp-leader">—</span></div>
+            <div class="success-detail-row"><span>Track</span><span id="sp-track">—</span></div>
+          </div>
+          <div style="margin-top:2rem;"><span class="spinner"></span> <span style="color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;"> Redirecting to Add Members…</span></div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="reveal delay-200">
+        <div class="info-card">
+          <h4>📋 How It Works</h4>
+          <div class="info-step">
+            <div class="info-step-num">1</div>
+            <div class="info-step-text">
+              <h5>Leader Registers</h5>
+              <p>Team leader fills this form with team name, track, and personal details.</p>
+            </div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">2</div>
+            <div class="info-step-text">
+              <h5>Add Team Members</h5>
+              <p>Leader is redirected to add remaining team members (name, email, class).</p>
+            </div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">3</div>
+            <div class="info-step-text">
+              <h5>Emails Sent Automatically</h5>
+              <p>All team members receive a confirmation email with team details.</p>
+            </div>
+          </div>
+          <div class="info-step" style="margin-bottom:0;">
+            <div class="info-step-num">4</div>
+            <div class="info-step-text">
+              <h5>You're Registered! 🎉</h5>
+              <p>Show your Team ID at the event for check-in.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h4>⚠️ Important Notes</h4>
+          <ul style="list-style:none;padding:0;">
+            <li style="padding:0.5rem 0;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-secondary);display:flex;gap:0.5rem;"><span style="color:var(--neon-cyan);">›</span> Teams must have 2–4 members</li>
+            <li style="padding:0.5rem 0;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-secondary);display:flex;gap:0.5rem;"><span style="color:var(--neon-cyan);">›</span> Only team leader fills this form</li>
+            <li style="padding:0.5rem 0;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-secondary);display:flex;gap:0.5rem;"><span style="color:var(--neon-cyan);">›</span> Each member must be a college student</li>
+            <li style="padding:0.5rem 0;border-bottom:1px solid var(--border-subtle);font-size:0.85rem;color:var(--text-secondary);display:flex;gap:0.5rem;"><span style="color:var(--neon-cyan);">›</span> One team can only choose one track</li>
+            <li style="padding:0.5rem 0;font-size:0.85rem;color:var(--text-secondary);display:flex;gap:0.5rem;"><span style="color:var(--neon-cyan);">›</span> Registration closes August 10, 2026</li>
+          </ul>
+        </div>
+
+        <div class="info-card" style="border-color:rgba(0,245,255,0.3);background:linear-gradient(135deg,rgba(0,245,255,0.05),rgba(123,47,247,0.08));">
+          <h4 style="color:var(--neon-green);">🏆 Event Date</h4>
+          <div style="font-family:var(--font-heading);font-size:1.5rem;color:var(--text-primary);margin-bottom:0.25rem;">August 13, 2026</div>
+          <div style="font-family:var(--font-mono);font-size:0.8rem;color:var(--neon-cyan);">9:00 AM IST · 24-Hour Hackathon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-logo">BUILDATHON</div>
+    <p>AI Hackathon · August 13, 2026 · 9:00 AM IST</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="challenges.html">Challenges</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="divider"></div>
+    <p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">© 2026 Buildathon. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/particles.js"></script>
+<script src="js/main.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>

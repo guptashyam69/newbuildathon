@@ -179,43 +179,59 @@ function doPost(e) {
         "- Rules & Submissions: AI-assisted coding is allowed but you must explain your work. Final Round 2 deliverables include: Working Prototype, Source Code repository link, Project PPT, System Architecture Diagram.\n\n" +
         "Answer the user's question accurately using ONLY this information. If the question is outside the scope of Buildathon, politely inform them that you can only answer questions related to the Buildathon 2026 hackathon.";
 
-      try {
-        var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
-        var payload = {
-          contents: [{
-            parts: [{
-              text: promptContext + "\n\nUser Question: " + data.query
+      var urlsToTry = [
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey
+      ];
+      
+      var replyText = "";
+      var success = false;
+      var lastError = "";
+      
+      for (var i = 0; i < urlsToTry.length; i++) {
+        try {
+          var url = urlsToTry[i];
+          var payload = {
+            contents: [{
+              parts: [{
+                text: promptContext + "\n\nUser Question: " + data.query
+              }]
             }]
-          }]
-        };
-        
-        var options = {
-          method: "post",
-          contentType: "application/json",
-          payload: JSON.stringify(payload),
-          muteHttpExceptions: true
-        };
-        
-        var response = UrlFetchApp.fetch(url, options);
-        var responseText = response.getContentText();
-        var resData = JSON.parse(responseText);
-        
-        var replyText = "";
-        if (resData.candidates && resData.candidates[0] && resData.candidates[0].content && resData.candidates[0].content.parts && resData.candidates[0].content.parts[0]) {
-          replyText = resData.candidates[0].content.parts[0].text;
-        } else if (resData.error) {
-          replyText = "Error from Gemini API: " + resData.error.message;
-        } else {
-          replyText = "I encountered an issue processing your request from the AI model. Please check the logs.";
-        }
-        
-        return ContentService.createTextOutput(JSON.stringify({ status: "success", reply: replyText }))
-          .setMimeType(ContentService.MimeType.JSON);
+          };
           
-      } catch (err) {
-        return ContentService.createTextOutput(JSON.stringify({ status: "success", reply: "Sorry, I had trouble contacting the Gemini API: " + err.toString() }))
-          .setMimeType(ContentService.MimeType.JSON);
+          var options = {
+            method: "post",
+            contentType: "application/json",
+            payload: JSON.stringify(payload),
+            muteHttpExceptions: true
+          };
+          
+          var response = UrlFetchApp.fetch(url, options);
+          var responseText = response.getContentText();
+          var resData = JSON.parse(responseText);
+          
+          if (resData.candidates && resData.candidates[0] && resData.candidates[0].content && resData.candidates[0].content.parts && resData.candidates[0].content.parts[0]) {
+            replyText = resData.candidates[0].content.parts[0].text;
+            success = true;
+            break;
+          } else if (resData.error) {
+            lastError = resData.error.message;
+          } else {
+            lastError = "Unknown error format";
+          }
+        } catch (err) {
+          lastError = err.toString();
+        }
       }
+      
+      if (!success) {
+        replyText = "I encountered an issue connecting to Gemini. Last error details: " + lastError;
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", reply: replyText }))
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Invalid action" }))

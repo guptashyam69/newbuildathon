@@ -201,6 +201,42 @@ class FAQChatbot {
       help: "I am the Buildathon AI assistant. Ask me about eligibility, registration steps, 9 tracks, deliverables, or rewards!"
     };
 
+    // Client-side local knowledge base for free, zero-latency custom Q&A search
+    this.knowledgeBase = [
+      {
+        keywords: ['eligible', 'eligibility', 'who', 'participate', 'join', 'student', 'year', 'college', 'branch', 'qualification', 'qualification', 'qualification', 'qualification'],
+        answer: "Any college student is welcome to participate! Undergraduates, postgraduates, engineering, science, or commerce streams. All years and colleges are welcome."
+      },
+      {
+        keywords: ['register', 'registration', 'how', 'form', 'link', 'signup', 'apply', 'leader', 'fee', 'registering'],
+        answer: "Registration is simple and free! Only the team leader needs to fill the registration form first. Once the leader registers and receives a Team ID, they can dynamically add the other 1 to 3 members using their dashboard. Capped at 2–4 members per team."
+      },
+      {
+        keywords: ['track', 'tracks', 'challenge', 'challenges', 'topic', 'topics', 'theme', 'themes', 'category', 'categories'],
+        answer: "We have 9 tracks:<br>• <strong>Track 01</strong>: Connected Communities (Social Welfare)<br>• <strong>Track 02</strong>: AI for Impact (Real-World AI)<br>• <strong>Track 03</strong>: Future Learning (EdTech)<br>• <strong>Track 04</strong>: Green Future (Sustainability)<br>• <strong>Track 05</strong>: Smart Agriculture (AgriTech)<br>• <strong>Track 06</strong>: Smart Sports (SportsTech)<br>• <strong>Track 07</strong>: Smart Healthcare (Digital Health)<br>• <strong>Track 08</strong>: Women Safety (SafeHer)<br>• <strong>Track 09</strong>: Smart Campus (Digital College)<br><a href='challenges.html' style='color:var(--neon-cyan); text-decoration:underline;'>View all track details here</a>."
+      },
+      {
+        keywords: ['submit', 'submission', 'deliverable', 'deliverables', 'what to submit', 'round 2', 'prototype', 'source code', 'ppt', 'github'],
+        answer: "For Round 2, teams must submit:<br>1. A working prototype (Web/Mobile/Desktop).<br>2. Link to the source code repository (GitHub).<br>3. Project Presentation (PPT).<br>4. System Architecture Diagram."
+      },
+      {
+        keywords: ['reward', 'rewards', 'prize', 'prizes', 'cash', 'money', 'certificate', 'certificates', 'swag', 'trophy', 'trophies', 'surprise', 'amount', 'win'],
+        answer: "Rewards are exciting surprises! Winners will receive trophies, exclusive developer gear, certificates, and mystery reward hampers. All participants receive badges, certificates, and swag kits! (No cash prize amounts are announced, they are mystery surprise rewards)."
+      },
+      {
+        keywords: ['time', 'duration', 'hour', 'hours', 'when', 'date', 'timeline', 'schedule', 'rounds', 'round', 'elimination', 'day', 'august'],
+        answer: "Buildathon 2026 is a <strong>4-hour hackathon</strong> on August 13, 2026. Timeline:<br>• <strong>9:00 AM IST</strong>: Round 1 (Problem Solving - top 5-6 qualify)<br>• <strong>10:30 AM IST</strong>: Round 2 (AI Web Building - top 3 qualify)<br>• <strong>12:00 PM IST</strong>: Round 3 (Product Pitch & Demo - final presentations)<br>• <strong>1:00 PM IST</strong>: Results & Award Distribution."
+      },
+      {
+        keywords: ['team', 'member', 'members', 'size', 'limit', 'many', 'partner', 'solo', 'individual', 'people'],
+        answer: "Teams must consist of <strong>2 to 4 members</strong>. Individual (solo) participation is not allowed. All team members must be registered under the same Team ID."
+      },
+      {
+        keywords: ['rule', 'rules', 'guideline', 'guidelines', 'allow', 'allowed', 'use', 'ai', 'assisted', 'chatgpt', 'copilot', 'cheating'],
+        answer: "Rules:<br>1. Build within the hackathon duration.<br>2. AI-assisted coding (like ChatGPT/Copilot) is fully permitted, but participants must explain their work to the judges.<br>3. Open-source libraries and public APIs are allowed.<br>4. Ideas must be original, secure, and scalable."
+      }
+    ];
+
     this.init();
   }
 
@@ -296,45 +332,46 @@ class FAQChatbot {
       this.backContainer.style.display = 'block';
     }
     
-    // Append a temporary loading bot message
+    // Append a temporary loading bot message to feel dynamic
     const tempBotMsg = document.createElement('div');
     tempBotMsg.className = 'chat-msg bot';
-    tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span><span class="chat-bot-loading"><span class="spinner" style="display:inline-block;width:12px;height:12px;border:2px solid var(--neon-purple);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-right:0.5rem;vertical-align:middle;"></span>AI is searching site context...</span>`;
+    tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span><span class="chat-bot-loading"><span class="spinner" style="display:inline-block;width:12px;height:12px;border:2px solid var(--neon-purple);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-right:0.5rem;vertical-align:middle;"></span>Searching local site rules...</span>`;
     this.msgContainer.appendChild(tempBotMsg);
     this.msgContainer.scrollTop = this.msgContainer.scrollHeight;
     sfx.playTick();
     
-    // Fetch from backend script with Gemini action
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'askGemini',
-        query: queryText
-      })
-    })
-    .then(resp => resp.json())
-    .then(data => {
+    // Perform keyword analysis locally
+    setTimeout(() => {
+      const lowerQuery = queryText.toLowerCase();
+      let bestMatch = null;
+      let highestScore = 0;
+      
+      this.knowledgeBase.forEach(item => {
+        let score = 0;
+        item.keywords.forEach(kw => {
+          if (lowerQuery.indexOf(kw) !== -1) {
+            score++;
+          }
+        });
+        if (score > highestScore) {
+          highestScore = score;
+          bestMatch = item;
+        }
+      });
+      
+      let reply = "";
+      if (highestScore > 0 && bestMatch) {
+        reply = bestMatch.answer;
+      } else {
+        reply = "I couldn't find an exact answer. Here is how I can help:<br>• Ask about <strong>eligibility</strong> or who can participate.<br>• Ask about the <strong>9 tracks</strong> of the event.<br>• Ask about the <strong>4-hour timeline</strong> and schedule.<br>• Ask how to <strong>register</strong> or add team members.<br>• Ask about <strong>rules</strong> or <strong>deliverables</strong>.";
+      }
+      
       const loader = tempBotMsg.querySelector('.chat-bot-loading');
       if (loader) {
-        let reply = data.reply || "I'm sorry, I couldn't process your request. Please try again.";
-        // Simple markdown parsing to HTML
-        reply = reply
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\*(.*?)\*/g, '<em>$1</em>')
-          .replace(/\n/g, '<br>')
-          .replace(/- (.*?)(<br>|$)/g, '• $1$2');
         tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span>${reply}`;
         sfx.playSuccess();
       }
-    })
-    .catch(err => {
-      console.error(err);
-      const loader = tempBotMsg.querySelector('.chat-bot-loading');
-      if (loader) {
-        tempBotMsg.innerHTML = `<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--neon-purple);display:block;margin-bottom:0.25rem;">SYSTEM_COGNITIVE_BOT</span>An error occurred while connecting to the AI helper. Please try again.`;
-      }
-    });
+    }, 450);
   }
 }
 

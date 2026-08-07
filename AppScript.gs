@@ -179,20 +179,47 @@ function doPost(e) {
         "- Rules & Submissions: AI-assisted coding is allowed but you must explain your work. Final Round 2 deliverables include: Working Prototype, Source Code repository link, Project PPT, System Architecture Diagram.\n\n" +
         "Answer the user's question accurately using ONLY this information. If the question is outside the scope of Buildathon, politely inform them that you can only answer questions related to the Buildathon 2026 hackathon.";
 
-      var urlsToTry = [
-        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + apiKey,
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey,
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey
-      ];
-      
       var replyText = "";
       var success = false;
       var lastError = "";
       
-      for (var i = 0; i < urlsToTry.length; i++) {
+      // Step 1: Query ListModels to see what models this key has access to
+      var listUrl = "https://generativelanguage.googleapis.com/v1/models?key=" + apiKey;
+      var chosenModel = "";
+      try {
+        var listResponse = UrlFetchApp.fetch(listUrl, { muteHttpExceptions: true });
+        var listData = JSON.parse(listResponse.getContentText());
+        if (listData.models && listData.models.length > 0) {
+          // Find the first model that supports generateContent and contains 'gemini'
+          for (var i = 0; i < listData.models.length; i++) {
+            var m = listData.models[i];
+            var methods = m.supportedGenerationMethods || m.supported_generation_methods || [];
+            if (m.name && m.name.indexOf("gemini") !== -1 && methods.indexOf("generateContent") !== -1) {
+              if (m.name.indexOf("1.5-flash") !== -1 || m.name.indexOf("2.0-flash") !== -1) {
+                chosenModel = m.name;
+                break;
+              }
+              if (!chosenModel) {
+                chosenModel = m.name;
+              }
+            }
+          }
+        } else if (listData.error) {
+          lastError = "ListModels error: " + listData.error.message;
+        }
+      } catch (e) {
+        lastError = "ListModels exception: " + e.toString();
+      }
+      
+      if (!chosenModel) {
+        chosenModel = "models/gemini-1.5-flash"; 
+      }
+      
+      // Step 2: Call the generateContent endpoint with the chosen model
+      var apiVersions = ["v1", "v1beta"];
+      for (var v = 0; v < apiVersions.length; v++) {
         try {
-          var url = urlsToTry[i];
+          var url = "https://generativelanguage.googleapis.com/" + apiVersions[v] + "/" + chosenModel + ":generateContent?key=" + apiKey;
           var payload = {
             contents: [{
               parts: [{
